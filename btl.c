@@ -27,7 +27,7 @@ void CreateList(List *l){
     l->pTail = NULL;
 }
 
-Node* CreateNode(Data data){
+Node* CreateNode(Data *data){
     Node *p;
     p = (Node*)malloc(sizeof(Node));
 
@@ -35,12 +35,12 @@ Node* CreateNode(Data data){
 
     p->nPrev = NULL;
     p->nNext = NULL;
-    p->data = data;
+    p->data = *data;
 
     return p;
 }
 
-void AddHead(List *list, Data data){
+void AddHead(List *list, Data *data){
     Node *temp = CreateNode(data);
 
     if(list->pHead == NULL){
@@ -48,11 +48,12 @@ void AddHead(List *list, Data data){
         list->pTail = list->pHead;
     }else{
         temp->nNext = list->pHead;
+        list->pHead->nPrev = temp;
         list->pHead = temp;
     }
 }
 
-void AddTail(List *list, Data data){
+void AddTail(List *list, Data *data){
     Node *temp = CreateNode(data);
 
     if(list->pHead == NULL){
@@ -69,13 +70,12 @@ void PrintCmt(){
     printf("\n=--------------------------------------------------------=");
 }
 
-Data *NhapData(Data *data, int *n){
-    data = (Data*)malloc(sizeof(Data));
-
+Data *NhapData(Data *data){
+    
     printf("\nNhap maCB: ");
     scanf("%d", &data->maCB);
     fflush(stdout);
-    if(data->maCB <= 0) return NULL;
+    if(data->maCB < 1) return NULL;
     
     printf("Nhap ho ten: ");
     getchar();
@@ -94,24 +94,24 @@ Data *NhapData(Data *data, int *n){
     
 
     PrintCmt();
-    //n++;
 
     return data;
 }
 
 // In ra thong tin ko co luong
-void PrintInformationNormal(Node *p){
-    printf("\n%5d %20s %15s %15s %8.1f", p->data.maCB, p->data.hoTen, p->data.phongBan, p->data.chucVu, p->data.hsLuong);
+void PrintInformationNormal(Node *p, int stt){
+    printf("\n%5d %5d %20s %15s %15s %8.1f", stt, p->data.maCB, p->data.hoTen, p->data.phongBan, p->data.chucVu, p->data.hsLuong);
 }
 
 // In ra thong tin voi luong
-void PrintInformationWithLuong(Node *p){
-    printf("\n%5d %20s %15s %15s %8.1f %8.1f", p->data.maCB, p->data.hoTen, p->data.phongBan, p->data.chucVu, p->data.hsLuong, p->data.hsLuong * 1150000);
+void PrintInformationWithLuong(Node *p, int stt){
+    printf("\n%5d %5d %20s %15s %15s %8.1f %8.1f", stt, p->data.maCB, p->data.hoTen, p->data.phongBan, p->data.chucVu, p->data.hsLuong, p->data.hsLuong * 1150000);
 }
 
 // Goi in
 void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1: in ra luong = ct : luong = hsluong * 1150000
     
+    char stt[] = "STT";
     char maCB[] = "Ma CB"; 
     char hoTen[] = "Ho ten"; 
     char phongBan[] = "Phong ban"; 
@@ -120,17 +120,22 @@ void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1:
     char strLuong[] = "luong"; 
 
     PrintCmt();
+    int count;
     if(isLuong == 0){
-        printf("\n%5s %20s %15s %15s %4s", maCB, hoTen, phongBan, chucVu, hsLuong);
-        while(p != NULL){     
-            PrintInformationNormal(p);
+        count = 0;
+        printf("\n%5s %5s %20s %15s %15s %4s", stt, maCB, hoTen, phongBan, chucVu, hsLuong);
+        while(p != NULL){    
+            count++; 
+            PrintInformationNormal(p, count);
             p = p->nNext;    
         }
         
     }else{
-        printf("\n%5s %20s %15s %15s %4s %8s", maCB, hoTen, phongBan, chucVu, hsLuong, strLuong);
-        while(p != NULL){    
-            PrintInformationWithLuong(p); 
+        count = 0;
+        printf("\n%5s %5s %20s %15s %15s %4s %8s", stt, maCB, hoTen, phongBan, chucVu, hsLuong, strLuong);
+        while(p != NULL){
+            count++;    
+            PrintInformationWithLuong(p, count); 
             p = p->nNext;   
         }
     }
@@ -140,6 +145,7 @@ void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1:
 // In ra danh sach voi hs luong >= 4.9
 void PrintIf(List *list, Node *p){
     float hs = 4.9f;
+    char stt[] = "STT";
     char maCB[] = "Ma CB"; 
     char hoTen[] = "Ho ten"; 
     char phongBan[] = "Phong ban"; 
@@ -148,10 +154,12 @@ void PrintIf(List *list, Node *p){
     char strLuong[] = "luong"; 
 
     PrintCmt();
-    printf("\n%5s %20s %15s %15s %4s %8s", maCB, hoTen, phongBan, chucVu, hsLuong, strLuong);
+    int count = 0;
+    printf("\n%5s %5s %20s %15s %15s %4s %8s", stt, maCB, hoTen, phongBan, chucVu, hsLuong, strLuong);
     while(p != NULL){     
+        count++;
         if(p->data.hsLuong >= hs)
-            PrintInformationWithLuong(p);
+            PrintInformationWithLuong(p, count);
         p = p->nNext;    
     }  
 
@@ -206,6 +214,52 @@ void CountMemberInPB(List *list, Node *p){
     PrintCmt();
 }
 
+void InsertPos(List *list, Data *data, int pos){   
+    int count = 0;
+    
+    Node *p = list->pHead;
+    Node *temp = CreateNode(data);
+
+    if(pos <= 1){
+        AddHead(list, data);
+        return;
+    }
+
+    while(p != NULL && count < pos){
+        count++;
+        if(count == pos){
+            //temp->nPrev = p->nPrev;
+            //temp->nNext = p;
+
+            //p->nPrev = temp;
+            //p->nPrev->nNext = temp;
+
+            return;
+        }
+        
+        p = p->nNext;
+    }
+
+    AddTail(list, data);
+}
+
+void InsertByPos(List *list){
+    Node *p;
+    p = list->pHead;
+    Print(list, p, 0);
+
+    int pos;
+    printf("\nNhap STT muon chen: ");
+    scanf("%d", &pos);
+
+    Data *data;
+    data = (Data*)malloc(sizeof(Data));
+    data = NhapData(data);
+
+    InsertPos(list, data, pos);
+}
+
+
 int main(){  
     int choose = -1;
     int n = 0;
@@ -228,16 +282,19 @@ int main(){
 
         if(choose == 1){
             do{            
-                data = NhapData(data, &n);
+                data = (Data*)malloc(sizeof(Data));
+                data = NhapData(data);
+
                 if(data == NULL) 
                     break;                    
-                else 
-                    AddTail(list, *data);
-
+                else {
+                    AddTail(list, data);
+                    n++;
+                }   
             }while(1); 
         }
         else if(choose == 2){
-            printf("TODO:");
+            InsertByPos(list);
         }
         else if(choose == 3){
             p = list->pHead;
