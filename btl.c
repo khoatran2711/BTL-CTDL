@@ -16,7 +16,6 @@ struct node{
 
 typedef struct node Node;
 
-
 typedef struct{
     Node *pHead;    // dia chi cua phan tu dau tien
     Node *pTail;    // dia chi cua phan tu cuoi cung
@@ -162,10 +161,10 @@ void PrintIf(List *list, Node *p){
 
 // 1: bo qua || 0: chua dem
 int IsCounted(Node *p){
-    Node *temp = p;
+    Node *temp = p->nPrev;
     while (temp != NULL)
     {
-        if(strcmp(p->data.phongBan, temp->data.phongBan) != 0){
+        if(strcmp(p->data.phongBan, temp->data.phongBan) == 0){
             return 1;
         }
 
