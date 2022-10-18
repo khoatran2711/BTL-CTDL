@@ -109,7 +109,7 @@ void PrintInformationWithLuong(Node *p, int stt){
 }
 
 // Goi in
-void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1: in ra luong = ct : luong = hsluong * 1150000
+void Print(List *list, int isLuong){         // 0: ko in ra luong || 1: in ra luong = ct : luong = hsluong * 1150000
     
     char stt[] = "STT";
     char maCB[] = "Ma CB"; 
@@ -118,6 +118,8 @@ void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1:
     char chucVu[] = "Chuc vu"; 
     char hsLuong[] = "hs luong"; 
     char strLuong[] = "luong"; 
+
+    Node *p = list->pHead;
 
     PrintCmt();
     int count;
@@ -143,7 +145,7 @@ void Print(List *list, Node *p, int isLuong){         // 0: ko in ra luong || 1:
 }
 
 // In ra danh sach voi hs luong >= 4.9
-void PrintIf(List *list, Node *p){
+void PrintIf(List *list){
     float hs = 4.9f;
     char stt[] = "STT";
     char maCB[] = "Ma CB"; 
@@ -152,6 +154,8 @@ void PrintIf(List *list, Node *p){
     char chucVu[] = "Chuc vu"; 
     char hsLuong[] = "hs luong"; 
     char strLuong[] = "luong"; 
+
+    Node *p = list->pHead;
 
     PrintCmt();
     int count = 0;
@@ -183,8 +187,8 @@ int IsCounted(Node *p){
 }
 
 // Count member 
-void CountMemberInPB(List *list, Node *p){
-    p = list->pHead;
+void CountMemberInPB(List *list){
+    Node *p = list->pHead;
     int count;
     char strPhongBan[] = "Phong ban"; 
     char strCount[] = "Count"; 
@@ -219,6 +223,7 @@ void InsertPos(List *list, Data *data, int pos){
     
     Node *p = list->pHead;
     Node *temp = CreateNode(data);
+    Node *prev = NULL;
 
     if(pos <= 1){
         AddHead(list, data);
@@ -228,15 +233,15 @@ void InsertPos(List *list, Data *data, int pos){
     while(p != NULL && count < pos){
         count++;
         if(count == pos){
-            //temp->nPrev = p->nPrev;
-            //temp->nNext = p;
+            temp->nPrev = p->nPrev;
+            temp->nNext = p;
 
-            //p->nPrev = temp;
-            //p->nPrev->nNext = temp;
+            p->nPrev = temp;
+            prev->nNext = temp;
 
-            return;
+            return;           
         }
-        
+        prev = p;
         p = p->nNext;
     }
 
@@ -246,7 +251,7 @@ void InsertPos(List *list, Data *data, int pos){
 void InsertByPos(List *list){
     Node *p;
     p = list->pHead;
-    Print(list, p, 0);
+    Print(list, 0);
 
     int pos;
     printf("\nNhap STT muon chen: ");
@@ -259,58 +264,56 @@ void InsertByPos(List *list){
     InsertPos(list, data, pos);
 }
 
+void ScanInput(List *list, Data *data){ 
+    
+    data = NhapData(data);
+    if(data == NULL) 
+        return;   
+    else    
+        AddTail(list, data);
+    ScanInput(list, data);
+    
+}
 
-int main(){  
+void PrintMenu(){
+    printf("\n=====Chuong trinh quan ly nhan su=====");
+    printf("\n|| 1: Nhap danh sach.");
+    printf("\n|| 2: Them 1 can bo vao vi tri.");
+    printf("\n|| 3: Tinh luong cho nhan vien.");
+    printf("\n|| 4: In danh sach can bo theo phong ban.");
+    printf("\n|| 5: In cac can bo co he so luong >= 4.9.");
+    printf("\n|| 0: Thoat?");
+    printf("\n======================================");
+    printf("\nNhap lua chon: ");
+}
+
+
+int main(){   
     int choose = -1;
     int n = 0;
     Node *p;
     List *list;
-    CreateList(list);        
-    Data *data;
+    CreateList(list);   
+	Data *data = (Data*)malloc(sizeof(Data));
     do{
-        printf("\n=====Chuong trinh quan ly nhan su=====");
-        printf("\n|| 1: Nhap danh sach.");
-        printf("\n|| 2: Them 1 can bo vao vi tri.");
-        printf("\n|| 3: Tinh luong cho nhan vien.");
-        printf("\n|| 4: In danh sach can bo theo phong ban.");
-        printf("\n|| 5: In cac can bo co he so luong >= 4.9.");
-        printf("\n|| 6: Xuat.");
-        printf("\n|| 0: Thoat?");
-        printf("\n======================================");
-        printf("\nNhap lua chon: ");
+        PrintMenu();
         scanf("%d", &choose);
 
-        if(choose == 1){
-            do{            
-                data = (Data*)malloc(sizeof(Data));
-                data = NhapData(data);
-
-                if(data == NULL) 
-                    break;                    
-                else {
-                    AddTail(list, data);
-                    n++;
-                }   
-            }while(1); 
+        if(choose == 1){  		
+    		ScanInput(list, data);   
         }
         else if(choose == 2){
             InsertByPos(list);
         }
         else if(choose == 3){
-            p = list->pHead;
-            Print(list, p, 1);
+            
+            Print(list, 1);
         }
         else if(choose == 4){
-            p = list->pHead;
-            CountMemberInPB(list, p);
+            CountMemberInPB(list);
         }
         else if(choose == 5){
-            p = list->pHead;
-            PrintIf(list, p);
-        }
-        else if(choose ==  6){
-            p = list->pHead;
-            Print(list, p, 0);
+            PrintIf(list);
         }
 
     }while(choose > 0);
