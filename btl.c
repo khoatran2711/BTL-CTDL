@@ -292,7 +292,7 @@ int main(){
     int choose = -1;
     int n = 0;
     Node *p;
-    List *list;
+    List *list = (List*)malloc(sizeof(List));
     CreateList(list);   
 	Data *data = (Data*)malloc(sizeof(Data));
     do{
