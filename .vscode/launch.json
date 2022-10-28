@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Coding/BTL-CSDL",
-      "program": "c:/Coding/BTL-CSDL/build/Debug/outDebug",
+      "cwd": "c:/Coding/BTLnew",
+      "program": "c:/Coding/BTLnew/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
